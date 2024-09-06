@@ -98,17 +98,15 @@ class Quadrotor:
     T_body = np.array([0.0, 0.0, T])
 
     R = self.utils.euler_rotation(eta[0], eta[1], eta[2])
-    T_inv = self.utils.T_angular_inv(eta[0], eta[1], eta[2])
+    T_inv = self.utils.T_angular_inv(eta[0], eta[1])
 
     zeta_dot = R @ nu
     eta_dot = T_inv @ omega
 
-    I_inv = np.diag(np.array([1.0 / self.config["Ixx"], 1.0 / self.config["Iyy"], 1 / self.config["Izz"]]))
+    omega_dot = self.I_inv @ (- np.cross(omega, np.dot(self.I, omega))) + self.I_inv @ tau_b
+    nu_dot = -np.cross(omega, nu) - self.config["g"] * R.T @ np.array([0,0,1]) + T_body / self.config["m"]
 
-    omega_dot = I_inv @ (tau_b - np.cross(omega, np.dot(self.inertia, omega)))
-    nu_dot = -np.cross(omega, nu) - np.dot(G, R) + T_body / self.config["m"]
-
-    return np.hstack((zeta_dot, eta_dot, nu_dot, omega_dot))
+    return np.hstack([zeta_dot, eta_dot, nu_dot, omega_dot])
 
   def update_state(self, control: np.array, dt: float):
     """
