@@ -13,13 +13,13 @@ from colorama import Fore, Back, Style
 
 class Plot_Quadrotor():
     def __init__(self, 
-                 init_state=np.zeros(12), 
-                 trajectory_ref=None,
-                 size=1, 
-                 show_animation=False, 
-                 xlim=[-3, 3], 
-                 ylim=[-3, 3], 
-                 zlim=[-3, 3],):
+                 init_state:np.array=np.zeros(12), 
+                 trajectory_ref:np.array=None,
+                 size:int=1, 
+                 show_animation:bool=False, 
+                 xlimit:list=None, 
+                 ylimit:list=None, 
+                 zlimit:list=None,):
         self.x, self.y, self.z = init_state[0:3]
         self.roll, self.pitch, self.yaw = init_state[3:6]
         self.size = size
@@ -36,9 +36,9 @@ class Plot_Quadrotor():
         self.wing2 = []
         self.show_animation = show_animation
 
-        self.xlim = xlim
-        self.ylim = ylim
-        self.zlim = zlim
+        self.xlim = xlimit
+        self.ylim = ylimit
+        self.zlim = zlimit
 
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111, projection='3d')
@@ -88,9 +88,12 @@ class Plot_Quadrotor():
             self.ax.plot3D(self.x_data, self.y_data, self.z_data, color="green", linestyle='--',)
             self.ax.plot3D(self.traj_ref[:, 0], self.traj_ref[:, 1], self.traj_ref[:, 2], color="cyan", linestyle='-', alpha=0.5)
 
-            self.ax.set_xlim(self.xlim[0], self.xlim[1])
-            self.ax.set_ylim(self.ylim[0], self.ylim[1])
-            self.ax.set_zlim(self.zlim[0], self.zlim[1])
+            if self.xlim :
+                self.ax.set_xlim(self.xlim[0], self.xlim[1])
+            if self.ylim :
+                self.ax.set_ylim(self.ylim[0], self.ylim[1])
+            if self.zlim :
+                self.ax.set_zlim(self.zlim[0], self.zlim[1])
             plt.pause(0.001)
 
     def save_animation(self, filename='quadcopter_animation.mp4', interval=100, fps=10, dpi=300):
@@ -115,6 +118,9 @@ class Plot_Quadrotor():
         self.ax.plot3D(self.x_data[:i], self.y_data[:i], self.z_data[:i], color="green", linestyle='--',)
         self.ax.plot3D(self.traj_ref[:, 0], self.traj_ref[:, 1], self.traj_ref[:, 2], color="cyan", linestyle='-', alpha=0.5)
 
-        self.ax.set_xlim(self.xlim[0], self.xlim[1])
-        self.ax.set_ylim(self.ylim[0], self.ylim[1])
-        self.ax.set_zlim(self.zlim[0], self.zlim[1])
+        if self.xlim :
+            self.ax.set_xlim(self.xlim[0], self.xlim[1])
+        if self.ylim :
+            self.ax.set_ylim(self.ylim[0], self.ylim[1])
+        if self.zlim :
+            self.ax.set_zlim(self.zlim[0], self.zlim[1])
