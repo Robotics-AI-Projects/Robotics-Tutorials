@@ -67,7 +67,8 @@ class Quadrotor:
     self.config = config
     self.state = initial_state  # x, y, z, phi, theta, psi, u, v, w, p, q, r
     self.utils = utilities()
-    self.inertia = np.diag([self.config["Ixx"], self.config["Iyy"], self.config["Izz"]]) # diagonal inertia matrix
+    self.I = np.diag([self.config["Ixx"], self.config["Iyy"], self.config["Izz"]]) # diagonal inertia matrix
+    self.I_inv = np.diag([1/self.config["Ixx"], 1/self.config["Iyy"], 1/self.config["Izz"]])
 
   def tau_b(self, input: list):
     """
@@ -93,12 +94,11 @@ class Quadrotor:
     omega = state[9:12]  # p, q, r
 
     tau_b = self.tau_b(control)
-    G = np.array([0.0, 0.0, self.config["g"]])
     T = self.config["k"] * np.sum(control)
     T_body = np.array([0.0, 0.0, T])
 
     R = self.utils.euler_rotation(eta[0], eta[1], eta[2])
-    T_inv = self.utils.T_angular_inv(eta[0], eta[1])
+    T_inv = self.utils.T_angular_inv(eta[0], eta[1], eta[2])
 
     zeta_dot = R @ nu
     eta_dot = T_inv @ omega
